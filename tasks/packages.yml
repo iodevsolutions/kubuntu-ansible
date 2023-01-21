@@ -1,0 +1,94 @@
+- name: install base packages
+  become: yes
+  apt:
+    #name: ['build-essential', 'cmake', 'curl', 'fzf', 'htop', 'kitty', 'neofetch', 'neovim', 'powerline', 'python3-pip', 'tmux']
+   name: ['build-essential', 'cmake', 'curl', 'fzf', 'htop', 'kitty', 'neofetch', 'powerline', 'python3-pip', 'tmux']
+   state: present
+
+# install neovim release (v0.8.1) 
+- name: check for neovim install
+  stat: path=/usr/bin/nvim
+  register: neov
+
+- name: install latest neovim deb
+  become: yes
+  shell: wget -q "https://github.com/neovim/neovim/releases/download/v0.8.1/nvim-linux64.deb" && dpkg -i nvim-linux64.deb && rm -f nvim-linux64.deb
+  when: not neov.stat.exists
+
+# install powerline_gitstatus
+- name: install powerline gitstatus
+  become: yes
+  shell: python3 -m pip install powerline_gitstatus     
+
+# install google chrome
+- name: check for existing google chrome gpg key
+  stat: path=/usr/share/keyrings/google_linux_signing_key.gpg
+  register: g
+
+- name: install google chrome gpg key
+  become: yes
+  shell: wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo gpg --dearmour -o /usr/share/keyrings/google_linux_signing_key.gpg
+  when: not g.stat.exists
+
+- name: add google repo
+  become: yes
+  shell: sudo sh -c 'echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google_linux_signing_key.gpg] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google.list'
+  when: not g.stat.exists
+
+- name: install google chrome
+  become: yes
+  apt:
+    update_cache: true
+    name: ['google-chrome-stable']
+    state: present
+
+# install docker
+- name: check for existing docker archive gpg key
+  stat: path=/usr/share/keyrings/docker-archive-keyring.gpg
+  register: d
+
+- name: install docker archive gpg key
+  become: yes
+  shell: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+  when: not d.stat.exists
+
+- name: add docker repo
+  become: yes
+  shell: sudo sh -c 'echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null'
+  when: not d.stat.exists
+
+- name: install docker
+  become: yes
+  apt:
+    update_cache: true
+    name: ['docker-ce', 'docker-ce-cli', 'containerd.io', 'docker-compose-plugin']
+    state: present
+
+#- name: add docker group
+#  become: yes
+#  shell: sudo groupadd docker
+#  when: not d.stat.exists
+
+- name: add user to docker group
+  become: yes
+  shell: sudo usermod -aG docker {{ default_user }}
+  when: not d.stat.exists
+
+# modification to allow docker-compose access on Ubuntu 20.04
+# sudo systemctl stop docker
+# sudo chmod 666 /var/run/docker.sock
+# sudo systemctl start docker
+
+# install teams snap
+- name: install microsoft teams via snap 
+  become: yes
+  snap:
+    name: teams
+
+# install remmina
+# sudo snap install remmina
+- name: install remmina RDP client via snap 
+  become: yes
+  snap:
+    name: remmina
+
