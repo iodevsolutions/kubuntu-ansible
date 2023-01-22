@@ -33,6 +33,10 @@
   shell: nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
   when: not pk.stat.exists
 
+# copy kitty configuration
+- name: clone kitty configuration
+  copy: src=files/dotfiles/kitty dest=/home/{{ default_user }}/.config owner={{ default_user }} group={{ default_user }} mode=preserve force=yes
+
 # copy bash configuration
 - name: clone bash configuration
   copy: src=files/dotfiles/bash/.bashrc dest=/home/{{ default_user }}/ owner={{ default_user }} group={{ default_user }} mode=preserve force=yes
