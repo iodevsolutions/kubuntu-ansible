@@ -1,10 +1,25 @@
+-- bootstrap packer
+local ensure_packer = function()
+  local fn = vim.fn
+  local install_path = fn.stdpath('data')..'/site/pack/packer/start/packer.nvim'
+  if fn.empty(fn.glob(install_path)) > 0 then
+    fn.system({'git', 'clone', '--depth', '1', 'https://github.com/wbthomason/packer.nvim', install_path})
+    vim.cmd [[packadd packer.nvim]]
+    return true
+  end
+  return false
+end
+
+local packer_bootstrap = ensure_packer()
+
 vim.cmd [[packadd packer.nvim]]
 
 require('packer').startup(function(use)
   -- Packer can manage itself
   use 'wbthomason/packer.nvim'
-  
-  --use 'rebelot/kanagawa.nvim'
+
+  use 'ellisonleao/gruvbox.nvim'
+  use 'rebelot/kanagawa.nvim'
   use 'folke/tokyonight.nvim'
   use {
     'ray-x/starry.nvim', 
@@ -31,19 +46,21 @@ require('packer').startup(function(use)
   use 'numToStr/Comment.nvim'
 
   -- Color
-  --vim.cmd[[colorscheme kanagawa]]
-  vim.cmd[[colorscheme tokyonight]]
-  require("tokyonight").setup({
+  vim.cmd[[colorscheme kanagawa]]
+  -- vim.cmd[[colorscheme tokyonight]]
+  -- require("tokyonight").setup({
     -- your configuration comes here
     -- or leave it empty to use the default settings
-    style = "storm"
-  })
+    -- style = "storm"
+  -- })
   --vim.cmd[[colorscheme dracula]]
+  -- vim.o.background = "dark" -- or "light" for light mode
+  -- vim.cmd([[colorscheme gruvbox]])
 
   -- Treesitter
   require'nvim-treesitter.configs'.setup {
     -- A list of parser names, or "all"
-    ensure_installed = { "c", "lua", "vim", "help", "dockerfile", "hcl", "python", "rust" },
+    ensure_installed = { "c", "lua", "vim", "dockerfile", "hcl", "python", "rust" },
     highlight = {
       -- `false` will disable the whole extension
       enable = true,
@@ -54,7 +71,7 @@ require('packer').startup(function(use)
   require('lualine').setup {
     options = {
       icons_enabled = true,
-      theme = 'tokyonight'  -- fluoromachine auto
+      theme = 'auto'  -- tokyonight fluoromachine auto
     }
   }
 
@@ -70,6 +87,7 @@ require('packer').startup(function(use)
 end)
 
 vim.opt.number = true
+vim.opt.relativenumber = true
 vim.opt.termguicolors = true
 -- vim.opt.background = dark 
 vim.opt.list = true

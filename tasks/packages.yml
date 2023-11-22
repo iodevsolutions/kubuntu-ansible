@@ -1,8 +1,14 @@
 - name: install base packages
   become: yes
   apt:
-    #name: ['build-essential', 'cmake', 'curl', 'fzf', 'htop', 'kitty', 'neofetch', 'neovim', 'powerline', 'python3-pip', 'tmux']
-   name: ['build-essential', 'cmake', 'curl', 'fzf', 'htop', 'kitty', 'neofetch', 'powerline', 'python3-pip', 'tmux']
+   name: ['build-essential', 'cmake', 'curl', 'fzf', 'btop', 'kitty', 'neofetch', 'powerline', 'fish', 'python3-pip', 'tmux', 'xclip']
+   state: present
+
+# install qemu / virt manager
+- name: install qemu 
+  become: yes
+  apt:
+   name: ['qemu-kvm', 'virt-manager', 'libvirt-daemon-system', 'virtinst', 'libvirt-clients', 'bridge-utils']
    state: present
 
 # install neovim release (v0.8.1) 
@@ -92,3 +98,11 @@
   snap:
     name: remmina
 
+# install vscode
+# sudo snap install code --classic
+- name: install visual studio code snap 
+  become: yes
+  snap:
+    name: code
+    classic: true
+ 

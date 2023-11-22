@@ -50,6 +50,6 @@
   copy: src=files/dotfiles/bash/.bash_aliases dest=/home/{{ default_user }}/ owner={{ default_user }} group={{ default_user }} mode=preserve force=yes
 
 # copy tmux configuration
-- name: clone tmux configuration
-  copy: src=files/dotfiles/tmux/.tmux.conf dest=/home/{{ default_user }}/ owner={{ default_user }} group={{ default_user }} mode=preserve force=yes
+# - name: clone tmux configuration
+  # copy: src=files/dotfiles/tmux/.tmux.conf dest=/home/{{ default_user }}/ owner={{ default_user }} group={{ default_user }} mode=preserve force=yes
 
