@@ -1,7 +1,7 @@
 - name: install base packages
   become: yes
   apt:
-   name: ['build-essential', 'cmake', 'curl', 'fzf', 'btop', 'kitty', 'neofetch', 'powerline', 'fish', 'python3-pip', 'tmux', 'xclip']
+   name: ['build-essential', 'cmake', 'curl', 'fzf', 'yq', 'btop', 'kitty', 'neofetch', 'powerline', 'fish', 'python3-pip', 'tmux', 'xclip']
    state: present
 
 # install qemu / virt manager
@@ -20,6 +20,16 @@
   become: yes
   shell: wget -q "https://github.com/neovim/neovim/releases/download/v0.8.1/nvim-linux64.deb" && dpkg -i nvim-linux64.deb && rm -f nvim-linux64.deb
   when: not neov.stat.exists
+
+# install gitmux release (v0.10.3) 
+- name: check for gitmux install
+  stat: path=/usr/bin/gitmux
+  register: gitm
+
+- name: install latest gitmux binary
+  become: yes
+  shell: wget -q "https://github.com/arl/gitmux/releases/download/v0.10.3/gitmux_v0.10.3_linux_amd64.tar.gz" && tar -xvf gitmux_v0.10.3_linux_amd64.tar.gz gitmux && mv gitmux /usr/bin/gitmux && rm gitmux_v0.10.3_linux_amd64.tar.gz 
+  when: not gitm.stat.exists
 
 # install powerline_gitstatus
 - name: install powerline gitstatus
